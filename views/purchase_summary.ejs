@@ -1,0 +1,27 @@
+<%- include('includes/_header') %>
+
+<main>
+  <h2>Danh sách thuốc cần mua cho <%= days %> ngày</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên thuốc</th>
+        <th>Số card cần mua</th>
+        <th>Số pack cần mua</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% drugs.forEach((drug, i) => { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= drug.name %></td>
+          <td><%= drug.cards %></td>
+          <td><%= drug.packs %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+
+<%- include('includes/_footer') %>

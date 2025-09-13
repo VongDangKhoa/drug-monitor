@@ -3,6 +3,11 @@ const route = express.Router(); //Allows us use express router in this file
 const services = require('../services/render');//uses the render.js file from services here
 
 const controller = require('../controller/controller');//uses the render.js file from services here
+//middelware
+const validateDrug = require('../middleware/validateDrug');
+// API for CRUD operations
+route.post('/api/drugs', validateDrug, controller.create);
+route.put('/api/drugs/:id', validateDrug, controller.update);
 
 
 route.get('/', services.home);
@@ -13,6 +18,10 @@ route.get('/dosage', services.dosage);
 route.get('/purchase', services.purchase);
 route.get('/add-drug', services.addDrug);
 route.get('/update-drug', services.updateDrug);
+//thanh toan
+route.get('/purchase-summary', services.purchaseSummary);
+route.get('/purchased', services.purchased);
+
 
 
 

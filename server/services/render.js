@@ -1,5 +1,5 @@
 const axios = require('axios');//http client used for making client & server side http requests in node
-const PORT = process.env.PORT || 3100; //uses either what's in our env or 3100 as our port (you can use any unused port)
+const PORT = process.env.PORT || 3000; //uses either what's in our env or 3100 as our port (you can use any unused port)
 const BASE_URI = process.env.BASE_URI || 'http://localhost'; //uses either what's in our env or 3100 as our port (you can use any unused port)
 
 exports.home= function(req, res) {
@@ -53,3 +53,27 @@ exports.purchase= function(req, res) {
         })
 }
 
+//thanh toan
+exports.purchased = function(req, res) {
+    let drugs = [];
+    try {
+        if (req.query.drugs) {
+            drugs = JSON.parse(decodeURIComponent(req.query.drugs));
+        }
+    } catch (err) {
+        console.error("Error parsing purchased drugs:", err);
+    }
+
+    res.render("purchased", { title: "Purchased Drugs", drugs });
+};
+
+exports.purchaseSummary = (req, res) => {
+    // dữ liệu tạm, sau này bạn có thể lấy từ DB hoặc session
+    const purchasedDrugs = req.body?.selectedDrugs || [];
+    res.render("purchase_summary", { title: "Purchase Summary", purchasedDrugs });
+};
+
+exports.purchased = (req, res) => {
+    // Sau khi mua thành công
+    res.render("purchased", { title: "Purchased", message: "Your purchase was successful!" });
+};

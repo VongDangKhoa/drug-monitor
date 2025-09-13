@@ -5,34 +5,101 @@
 <main id="main">
 
 	<h2>Calculate Drugs to purchase</h2>
-	<p>For how many days do you want to purchase drugs?</p> <form id="drug_days"> <input type="number" id="days" value="30"> <button type="submit">Enter</button> </form>
+	<p>For how many days do you want to purchase drugs?</p> 
+	
+	<form id="drug_days"> 
+		<input type="number" id="days" value="30"> 
+		<button type="submit">Enter</button> 
+	</form>
 
 	<table id="purchase_table">	
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Drug Name</th>
-				<th> Cards to Buy</th>
-				<th>Packs to Buy</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- Loop through drugs -->
-			<% for(let i = 0; i < drugs.length; i++) {%>
-			<% let days = 30; %>
-			<% let pills = days*drugs[i].perDay; %>
-			<tr>
-				<td><%= i + 1 %></td>
-				<td><%= drugs[i].name %></td>
-				<td><%= Math.ceil(pills/drugs[i].card) %> (<%= drugs[i].pack/drugs[i].card %> <% if (drugs[i].pack/drugs[i].card < 2) { %> card <%} else { %> cards <% } %> per pack)</td>
-				<td><%= Math.ceil(pills/drugs[i].pack) %></td>
-			</tr>
-			<% } %> <!--  End loop -->
-		</tbody>
-	</table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Drug Name</th>
+			<th>Cards to Buy</th>
+			<th>Packs to Buy</th>
+		</tr>
+	</thead>
+	<tbody id="purchaseBody">
+		<!-- Loop through drugs -->
+		<% for(let i = 0; i < drugs.length; i++) {%>
+		<tr data-name="<%= drugs[i].name %>" 
+		    data-perday="<%= drugs[i].perDay %>" 
+		    data-card="<%= drugs[i].card %>" 
+		    data-pack="<%= drugs[i].pack %>">
+			<td><%= i + 1 %></td>
+			<td><%= drugs[i].name %></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<% } %> <!--  End loop -->
+	</tbody>
+</table>
+
+<script>
+	const form = document.getElementById("drug_days");
+	const daysInput = document.getElementById("days");
+	const tbody = document.getElementById("purchaseBody");
+
+	form.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const days = +daysInput.value;
+		Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
+			const perDay = +tr.dataset.perday;
+			const card = +tr.dataset.card;
+			const pack = +tr.dataset.pack;
+			const pills = days * perDay;
+
+			tr.children[2].textContent = Math.ceil(pills / card) + 
+				` (${pack/card} ${pack/card < 2 ? "card" : "cards"} per pack)`;
+			tr.children[3].textContent = Math.ceil(pills / pack);
+		});
+	});
+</script>
+
+
+	<!-- Form mua hàng -->
+	<div style="margin-top:20px;">
+		<form id="purchaseForm" method="POST" action="/purchase-summary">
+			<input type="hidden" name="days" id="hiddenDays" value="30">
+			<button type="submit">Buy Now</button>
+		</form>
+		<button id="btnPrint">Print the list</button>
+	</div>
 </main>
 <!-- End main section -->
+
+<script>
+	// Đồng bộ input days với hidden input trong form mua hàng
+	const daysInput = document.getElementById("days");
+	const hiddenDays = document.getElementById("hiddenDays");
+	daysInput.addEventListener("input", () => {
+		hiddenDays.value = daysInput.value;
+	});
+</script>
+
 <!-- add footer -->
 <%- include('includes/_footer') %>
 <!-- end footer-->
 
+<script>
+	const form = document.getElementById("drug_days");
+	const daysInput = document.getElementById("days");
+	const tbody = document.getElementById("purchaseBody");
+
+	form.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const days = +daysInput.value;
+		Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
+			const perDay = +tr.dataset.perday;
+			const card = +tr.dataset.card;
+			const pack = +tr.dataset.pack;
+			const pills = days * perDay;
+
+			tr.children[2].textContent = Math.ceil(pills / card) + 
+				` (${pack/card} ${pack/card < 2 ? "card" : "cards"} per pack)`;
+			tr.children[3].textContent = Math.ceil(pills / pack);
+		});
+	});
+</script>
