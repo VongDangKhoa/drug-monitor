@@ -52,41 +52,45 @@ exports.find = (req,res)=>{
                 res.status(500).send({ message: "Error retrieving drug with id: " + id})
             })
 
-    }else{
-        Drugdb.find()
-            .then(drug => {
-                res.send(drug)
-            })
-            .catch(err => {
-                res.status(500).send({ message : err.message || "An error occurred while retriving drug information" })
-            })
-    }
+    }else {
+        
+    // get all (sorted by name)
+    Drugdb.find()
+      .sort({ name: 1 })
+      .then((drug) => {
+        return res.send(drug);
+      })
+      .catch((err) => {
+        return res
+          .status(500)
+          .send({ message: err.message || "An error occurred while retrieving drug information" });
+      });
+  }
 }
 
 
 // edits a drug selected using its  ID
-exports.update = (req,res)=>{
-    if(!req.body){
-        return res
-            .status(400)
-            .send({ message : "Cannot update an empty drug"})
-    }
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({ message: "Cannot update an empty drug" });
+  }
 
-    const id = req.params.id;
-    Drugdb.findByIdAndUpdate(id, req.body, { useFindAndModify: false})
-        .then(data => {
-            if(!data){
-                res.status(404).send({ message : `Drug with id: ${id} cannot be updated`})
-            }else{
-                res.send(data);
-                //res.redirect('/');
-            }
-        })
-        .catch(err =>{
-            res.status(500).send({ message : "Error in updating drug information"})
-        })
+  const id = req.params.id;
 
-}
+  Drugdb.findByIdAndUpdate(id, req.body, {
+    new: true,           // trả về document sau khi cập nhật
+    runValidators: true, // chạy validator của schema khi update
+  })
+    .then((data) => {
+      if (!data) {
+        return res.status(404).send({ message: `Drug with id: ${id} cannot be updated` });
+      }
+      return res.send(data);
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: "Error in updating drug information" });
+    });
+};
 
 
 // deletes a drug using its drug ID
